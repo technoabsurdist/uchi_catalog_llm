@@ -11,7 +11,8 @@ import chromadb
 load_dotenv()
 chroma_client = chromadb.Client()
 model_id = "gpt-3.5-turbo"
-llm = ChatOpenAI(model_name=model_id)
+finetuned_model_id = "ft:gpt-3.5-turbo-0125:uchicago:uchi-large5:8yKA4g7Z"
+llm = ChatOpenAI(model_name=finetuned_model_id)
 
 embeddings = OpenAIEmbeddings()
 db = Chroma(
@@ -32,11 +33,7 @@ st.set_page_config(
 )
 
 # Streamlit app setup
-# st.image("phoenix_placeholder_gray.png", width=400)
-# st.subheader("Pheonix.ai") 
-# st.caption("Welcome to Pheonix.ai, the UChicago College Catalog Helper! I am an AI academic advisor bot designed to assist you in navigating your academic journey effectively. Please feel free to ask me any questions related to your course selections, major decisions, graduation requirements, or any other catalog-related inquiries you might have.")
-# st.divider()
-col1, col2 = st.columns([1, 2.3])  # Adjust the ratio as needed
+col1, col2 = st.columns([1, 2.3])
 
 with col1:
     st.image("pheonixlogo.png", width=170)
