@@ -13,7 +13,7 @@ load_dotenv()
 chroma_client = chromadb.Client()
 model_id = "gpt-3.5-turbo"
 finetuned_model_id = "ft:gpt-3.5-turbo-0125:uchicago:uchi-large5:8yKA4g7Z" # not working well
-llm = ChatOpenAI(model_name=model_id)
+llm = ChatOpenAI(model_name=finetuned_model_id, temperature=0)
 
 embeddings = OpenAIEmbeddings()
 db = Chroma(
@@ -23,9 +23,7 @@ db = Chroma(
 )
 
 chain = RetrievalQA.from_chain_type(llm=llm,
-                                    chain_type="stuff",
-                                    retriever=db.as_retriever(),
-                                    verbose=True)
+                                    retriever=db.as_retriever())
 
 
 st.set_page_config(
@@ -34,10 +32,10 @@ st.set_page_config(
 )
 
 # Streamlit app setup
-col1, col2 = st.columns([1, 2.3])
+col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.image("resources/pheonixlogo2.png", width=185)
+    st.image("resources/pheonixlogo.png", width=185)
 
 with col2:
     st.subheader("Pheonix AI")
@@ -56,12 +54,10 @@ for message in st.session_state.messages:
 
 if prompt := st.chat_input("Ask me anything!"):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    
-    # generate + process bot response
+
     uchicago_system_prompt = f"{system_prompt} Query: \n{prompt}"
     response = chain(uchicago_system_prompt)  
-    response_text = response['result']
-
+    response_text = response["result"]
     st.session_state.messages.append({"role": "assistant", "content": response_text})
     
     st.rerun()
