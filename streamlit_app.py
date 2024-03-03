@@ -12,7 +12,7 @@ import sqlite3
 load_dotenv()
 chroma_client = chromadb.Client()
 model_id = "gpt-3.5-turbo"
-finetuned_model_id = "ft:gpt-3.5-turbo-0125:uchicago:uchi-large5:8yKA4g7Z"
+finetuned_model_id = "ft:gpt-3.5-turbo-0125:uchicago:uchi-large5:8yKA4g7Z" # not working well
 llm = ChatOpenAI(model_name=model_id)
 
 embeddings = OpenAIEmbeddings()

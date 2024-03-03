@@ -11,14 +11,19 @@ load_dotenv()
 chroma_client = chromadb.Client()
 model_id = "gpt-3.5-turbo"
 llm = ChatOpenAI(model_name=model_id)
-embeddings = OpenAIEmbeddings()
 
+# txt
 raw_documents = TextLoader('rawdata/catalog_data.txt').load()
 text_splitter = CharacterTextSplitter(chunk_size=700, chunk_overlap=80)
 documents = text_splitter.split_documents(raw_documents)
+
+# pdf
+# loader = PyPDFLoader("data/document.pdf")
+# docs = loader.load_and_split()
+
 chroma_db = Chroma.from_documents(
     documents=documents, 
-    embedding=embeddings, 
+    embedding=OpenAIEmbeddings(), 
     persist_directory="data", 
     collection_name="catalog_db_pdf"
 )
