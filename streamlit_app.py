@@ -6,9 +6,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 from prompts import system_prompt
 import chromadb
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import sqlite3
 
 # init + config
 load_dotenv()
@@ -21,12 +19,12 @@ embeddings = OpenAIEmbeddings()
 db = Chroma(
     persist_directory="data",
     embedding_function=embeddings,
-    collection_name="catalog_db"
+    collection_name="catalog_db_pdf"
 )
 
 chain = RetrievalQA.from_chain_type(llm=llm,
                                     chain_type="stuff",
-                                    retriever=db.as_retriever(search_type="mmr"),
+                                    retriever=db.as_retriever(),
                                     verbose=True)
 
 
@@ -39,7 +37,7 @@ st.set_page_config(
 col1, col2 = st.columns([1, 2.3])
 
 with col1:
-    st.image("pheonixlogo.png", width=170)
+    st.image("resources/pheonixlogo.png", width=170)
 
 with col2:
     st.subheader("Pheonix AI")
