@@ -1,12 +1,8 @@
 from dotenv import load_dotenv
 import streamlit as st
-from langchain.chains import RetrievalQA
-from langchain_core.prompts import ChatPromptTemplate
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
 from prompts import system_prompt
 import chromadb
 
