@@ -1,20 +1,19 @@
 from dotenv import load_dotenv
 import streamlit as st
 from langchain.chains import RetrievalQA
+from langchain_core.prompts import ChatPromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
 from prompts import system_prompt
 import chromadb
-import sqlite3
 
 # init + config
 load_dotenv()
 chroma_client = chromadb.Client()
 model_id = "gpt-3.5-turbo"
-finetuned_model_id = "ft:gpt-3.5-turbo-0125:uchicago:uchi-large5:8yKA4g7Z" # not working well
-llm = ChatOpenAI(model_name=finetuned_model_id, temperature=0)
-
 embeddings = OpenAIEmbeddings()
 db = Chroma(
     persist_directory="data",
@@ -22,28 +21,22 @@ db = Chroma(
     collection_name="catalog_db_pdf"
 )
 
-chain = RetrievalQA.from_chain_type(llm=llm,
-                                    retriever=db.as_retriever())
-
 
 st.set_page_config(
     page_title="college catalog helper",
     page_icon="🏛️",
 )
 
-# Streamlit app setup
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.image("resources/pheonixlogo.png", width=185)
+    st.image("resources/pheonixlogo.png", width=190)
 
 with col2:
     st.subheader("Pheonix AI")
     st.write("Welcome to Pheonix AI, the UChicago College Catalog helper! I am an LLM-powered academic advisor designed to assist you in your academic journey. Ask me any questions related to your course selections, major decisions, graduation requirements, or any other catalog-related inquiries you might have.")
 
 st.divider()
-
-
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -53,11 +46,23 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 if prompt := st.chat_input("Ask me anything!"):
+    # append user input to state
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    uchicago_system_prompt = f"{system_prompt} Query: \n{prompt}"
-    response = chain(uchicago_system_prompt)  
-    response_text = response["result"]
-    st.session_state.messages.append({"role": "assistant", "content": response_text})
-    
+    # create response
+    model = ChatOpenAI()
+    retriever = db.as_retriever()
+    docs = retriever.get_relevant_documents(prompt)
+    def format_docs(docs):
+        return "\n\n".join([d.page_content for d in docs])
+    system_prompt = f"""{system_prompt}.\n\nAnswer the question based on the following context:
+
+    {format_docs(docs)}
+
+    Question: {prompt}
+    """
+    response = model.invoke(system_prompt)
+
+    # append model response to state
+    st.session_state.messages.append({"role": "assistant", "content": response.content})
     st.rerun()
