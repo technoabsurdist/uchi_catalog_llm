@@ -12,3 +12,4 @@ data/
 */data/
 chroma.sqlite3
 *.sqlite*
+./uchi-catalog/data/
