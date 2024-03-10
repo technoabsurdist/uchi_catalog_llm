@@ -5,3 +5,10 @@ __pycache__/
 rawdata/
 venv/
 .DS_Store
+data
+data/
+/data/
+*/data/*
+*/data/
+chroma.sqlite3
+*.sqlite*

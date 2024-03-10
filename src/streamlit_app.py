@@ -14,7 +14,7 @@ embeddings = OpenAIEmbeddings()
 db = Chroma(
     persist_directory="data",
     embedding_function=embeddings,
-    collection_name="catalog_db_pdf"
+    collection_name="catalog_db_md"
 )
 
 
