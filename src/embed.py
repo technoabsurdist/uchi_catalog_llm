@@ -13,9 +13,11 @@ model_id = "gpt-3.5-turbo"
 llm = ChatOpenAI(model_name=model_id)
 
 # tried with text and pdf files and they both gave inferior results to markdown
-raw_documents = UnstructuredMarkdownLoader('../rawdata/catalog.md').load()
+raw_documents_md = UnstructuredMarkdownLoader('../rawdata/catalog.md').load()
+# raw_documents_pdf = PyPDFLoader("../rawdata/catalog.pdf").load()
 text_splitter = CharacterTextSplitter(chunk_size=700, chunk_overlap=80)
-docs = text_splitter.split_documents(raw_documents)
+docs = text_splitter.split_documents(raw_documents_md)
+# docs += text_splitter.split_documents(raw_documents_pdf)
 
 chroma_db = Chroma.from_documents(
     documents=docs, 
