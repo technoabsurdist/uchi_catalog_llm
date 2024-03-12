@@ -6,6 +6,10 @@ from langchain_community.vectorstores import Chroma
 from prompts import system_prompt
 import chromadb
 
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 # init + config
 load_dotenv()
 chroma_client = chromadb.Client()
@@ -23,14 +27,14 @@ st.set_page_config(
     page_icon="🏛️",
 )
 
-col1, col2 = st.columns([1, 2])
+col1, col2 = st.columns([0.5, 1.6])
 
 with col1:
-    st.image("../resources/phoenixlogo.svg", width=200)
+    st.image("../resources/phoenixlogo.svg", width=130)
 
 with col2:
     st.subheader("Pheonix AI")
-    st.write("Welcome to Pheonix AI, the UChicago College Catalog helper! I am an LLM-powered academic advisor designed to assist you in your academic journey. Ask me any questions related to your course selections, major decisions, graduation requirements, or any other catalog-related inquiries you might have.")
+    st.caption("Welcome to Pheonix AI, the AI-powered UChicago Academic Advisor! I am designed to assist you in your academic journey. Ask me questions related to your courses, major decisions, graduation requirements, or any other catalog-related inquiries you have.")
 
 st.divider()
 
