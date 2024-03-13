@@ -15,3 +15,5 @@ chroma.sqlite3
 /resources/
 resources/
 .DS_Store
+pysqlite3
+pysqlite3*
